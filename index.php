@@ -382,9 +382,6 @@ function editProduct(form) {
 			products.innerHTML = '';
 			products_array = result.products;
 			displayProducts(products_array);
-			add_product_modal.classList.add("hidden");
-			darken_layer.classList.add("hidden");
-			
 			editProducts(form.querySelector("#pid").value);
 		}
 	
