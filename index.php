@@ -98,7 +98,7 @@
 		<label>Comment
 			<input id="comment" name="comment" type="text" >
 		</label>
-		<label>Out Message
+		<label>Out Message (max 144b)
 			<input id="out_message" name="out_message" type="text" >
 		</label>
 		Only Use UUID <input id="add_out_message_uuid" name="out_message_uuid" type="checkbox" >
@@ -124,7 +124,7 @@
 		<label>Comment
 			<input id="comment" name="comment" type="text" >
 		</label>
-		<label>Out Message
+		<label>Out Message (max 144b)
 			<input id="out_message" name="out_message" type="text" >
 		</label>
 		Only Use UUID <input id="out_message_uuid" name="out_message_uuid" type="checkbox" >
