@@ -10,28 +10,7 @@ require_once('dbconn.php');
 require_once('walletapi.php');
 
 
-$changes=false;
-$active = [];
-if(isset($_POST['iaddress_status'])){
-	
-	foreach($_POST['iaddress_status'] as $key => $value){
-		$active[] = $key;		
-	}		
-}	
-	
-$iadds = getIAddresses($pdo,$_POST['pid']);
 
-foreach($iadds as $iaddr){
-	if(in_array($iaddr['id'],$active)){
-		if($iaddr['status'] == 0){
-			$changes = toggleIAddr($pdo,$iaddr['id'],1);
-		}
-	}else{//not submitted as active but is then deactivate
-		if($iaddr['status'] == 1){
-			$changes = toggleIAddr($pdo,$iaddr['id'],0);
-		}
-	}
-}	
 
 
 
@@ -40,6 +19,9 @@ foreach($iadds as $iaddr){
 
 //also in initialize...
 function toggleIAddr($pdo,$id,$status){
+	
+	
+	
 	$query='UPDATE i_addresses SET 
 		status=:status
 		WHERE id=:id';	
@@ -241,6 +223,28 @@ if(!empty($_POST)){
 	
 	//Save Product
 	if(empty($errors)){			
+		$changes=false;
+		$active = [];
+		if(isset($_POST['iaddress_status'])){
+			
+			foreach($_POST['iaddress_status'] as $key => $value){
+				$active[] = $key;		
+			}		
+		}	
+			
+		$iadds = getIAddresses($pdo,$_POST['pid']);
+
+		foreach($iadds as $iaddr){
+			if(in_array($iaddr['id'],$active)){
+				if($iaddr['status'] == 0){
+					$changes = toggleIAddr($pdo,$iaddr['id'],1);
+				}
+			}else{//not submitted as active but is then deactivate
+				if($iaddr['status'] == 1){
+					$changes = toggleIAddr($pdo,$iaddr['id'],0);
+				}
+			}
+		}	
 		$product_id = updateProduct($pdo);
 		if($product_id === false && !$changes){
 			$errors[] = "Failed to update product in db";
