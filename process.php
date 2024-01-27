@@ -226,7 +226,7 @@ if($new !== false){
 
 $messages = [];
 $errors = [];
-$type = [];	
+$type = '';	
 $UUID = new UUID;	
 foreach($notProcessed as $tx){
 	
