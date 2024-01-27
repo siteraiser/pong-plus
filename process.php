@@ -285,7 +285,7 @@ foreach($notProcessed as $tx){
 		$result = markAsProcessed($pdo,$tx['txid']);
 		if($result !== false){
 			$response = (object)[
-			"incoming_id"=>$tx['txid'],
+			"incoming_id"=>$tx['id'],
 			"txid"=>$responseTXID,
 			"type"=>$type,
 			"buyer_address"=>$address,
