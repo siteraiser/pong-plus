@@ -211,8 +211,6 @@ function generateProduct(product) {
 	let edit = document.createTextNode("Edit Product");
 	let button = document.createElement('button'); 
 	
-	
-	console.log("wtf:"+product.id);
 	button.addEventListener("click", (event) => {
 		//let form = event.target.parentElement;
 	
