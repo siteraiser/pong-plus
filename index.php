@@ -185,18 +185,7 @@ clear_buttons.forEach((button) => {
 		event.target.parentElement.querySelector('#transactions_list').innerHTML = '';
 	})
 });	
-/*
-let out_message_uuid = document.getElementById("out_message_uuid");
 
-edit_out_message_uuid.addEventListener("change", function (){
-	
-	var disable=false;
-	if(edit_out_message_uuid.checked ){
-		disable = true;
-	}	
-	document.getElementById("start_hours").disabled = disable;
-});
-*/
 
 
 /********************/
@@ -321,7 +310,7 @@ function addProduct(form) {
 		});
 
 		const result = await response.json();			
-		console.log("Success:", result);
+	
 		if(result.success == false){
 			let msgs = '';
 			if(typeof result.errors != 'undefined'){
@@ -342,8 +331,6 @@ function addProduct(form) {
 		}
 		
 		
-		
-		
 	  } catch (error) {
 		console.error("Error:", error);
 	  }
@@ -356,7 +343,7 @@ function addProduct(form) {
 add_product_button.addEventListener("click", (event) => {
 	event.preventDefault();
 	let form = event.target.parentElement;
-	console.log(form);
+
 	addProduct(form);
 });	
 
@@ -371,6 +358,7 @@ add_product_button.addEventListener("click", (event) => {
 
 function editProduct(form) {
 	async function submitProduct(form) {
+
 	  try {
 		const response = await fetch("//localhost/editproduct.php", {
 		  method: "POST", // or 'PUT'
@@ -381,7 +369,7 @@ function editProduct(form) {
 		});
 
 		const result = await response.json();			
-		console.log("Success:", result);
+
 		if(result.success == false){
 			let msgs = '';
 			if(typeof result.errors != 'undefined'){
@@ -398,10 +386,10 @@ function editProduct(form) {
 			displayProducts(products_array);
 			add_product_modal.classList.add("hidden");
 			darken_layer.classList.add("hidden");
+			
+			editProducts(form.querySelector("#pid").value);
 		}
-		
-		
-		
+	
 		
 	  } catch (error) {
 		console.error("Error:", error);
@@ -414,7 +402,7 @@ function editProduct(form) {
 edit_product_button.addEventListener("click", (event) => {
 	event.preventDefault();
 	let form = event.target.parentElement;
-	console.log(form);
+
 	editProduct(form);
 });	
 
@@ -461,9 +449,6 @@ function editProducts(pid) {
 
 
 
-
-
-
 /* start the program */	
 window.addEventListener('load', function() {
 	initialize(runit);	
@@ -486,9 +471,7 @@ function checkWallet() {
 		});
 
 		const result = await response.json();			
-		console.log("Success:", result);
 
-		
 		let msgs = '';
 		if(typeof result.errors != 'undefined'){
 			for(var key in result.errors){
