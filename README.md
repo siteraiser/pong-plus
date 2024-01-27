@@ -1,5 +1,6 @@
 # pong-plus
 Dero pong server with UI. Designed on PHP 7.4  <br />
+Another take on the Dero pong server by CaptainDero and SecretNameBasis  <br />
 Create a db with name pong. dbconn.php contains the credentials.  <br />
 Set your Engram wallet cyberdeck user and password in walletapi.php. <br />
 Begin creating products on index.php. <br />
