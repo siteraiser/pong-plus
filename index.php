@@ -72,6 +72,9 @@
 	overflow-y: auto;
     max-height: 100%;
 }
+
+.warning{color:red;}
+
 </style>
 </head>
 <body>
@@ -99,14 +102,14 @@
 			<input id="comment" name="comment" type="text" >
 		</label>
 		<label>Out Message (max 144b)
-			<input id="out_message" name="out_message" type="text" >
+			<input id="out_message" name="out_message" type="text" maxlength="144">
 		</label>
 		Only Use UUID <input id="add_out_message_uuid" name="out_message_uuid" type="checkbox" >
 		<label>Ask Amount (atomic units)
-			<input id="ask_amount" name="ask_amount" type="text" >
+			<input id="ask_amount" class="atomic_units" name="ask_amount" type="text" ><span class="dero_units"></span>
 		</label>
 		<label>Respond Amount (atomic units)
-			<input id="respond_amount" name="respond_amount" type="text" >
+			<input id="respond_amount" class="atomic_units" name="respond_amount" type="text" ><span class="dero_units"></span>
 		</label>
 		<label>Port
 			<input id="port" name="port" type="text" >
@@ -125,15 +128,15 @@
 			<input id="comment" name="comment" type="text" >
 		</label>
 		<label>Out Message (max 144b)
-			<input id="out_message" name="out_message" type="text" >
+			<input id="edit_out_message" name="out_message" type="text" maxlength="144">
 		</label>
 		Only Use UUID <input id="out_message_uuid" name="out_message_uuid" type="checkbox" >
 		
 		<label>Ask Amount (atomic units)
-			<input id="ask_amount" name="ask_amount" type="text" >
+			<input id="ask_amount" class="atomic_units" name="ask_amount" type="text" ><span class="dero_units"></span>
 		</label>
 		<label>Respond Amount (atomic units)
-			<input id="respond_amount" name="respond_amount" type="text" >
+			<input id="respond_amount"class="atomic_units" name="respond_amount" type="text" ><span class="dero_units"></span>
 		</label>
 		<label>Port
 			<input id="port" name="port" type="text" >
@@ -160,9 +163,10 @@ var edit_product_button = document.getElementById("edit_product");
 
 var close_buttons = document.querySelectorAll('.close');
 var darken_layer = document.querySelector('.darken');
-
 var clear_buttons = document.querySelectorAll('.clear');
 
+var out_messages = document.querySelectorAll('input[name="out_message"]');
+var amount_inputs = document.querySelectorAll('.atomic_units');
 /* show / hide modals */
 
 show_add_modal_button.addEventListener("click", (event) => {
@@ -187,6 +191,42 @@ clear_buttons.forEach((button) => {
 });	
 
 
+
+
+/* form validation */
+function getStringSize(){
+	 
+	let size =  new Blob([event.target.value]).size;
+	
+	if(size > 143){
+		event.target.classList.add("warning");
+	}else{
+		event.target.classList.remove("warning");
+	}
+}
+
+out_messages.forEach((input) => {
+input.addEventListener('keyup', getStringSize, false);
+input.addEventListener('blur', getStringSize, false);		
+});	
+
+
+function niceRound(number){
+	return Math.round(number*100000000)/100000000;
+}
+function convert(input){	
+	var deri = input.value;
+	deri = deri * .00001;
+	deri =  niceRound(deri);
+	input.parentElement.querySelector('.dero_units').innerHTML = deri+ " Dero";
+}
+function callConvert(){
+	convert(event.target);
+}
+amount_inputs.forEach((input) => {
+input.addEventListener('keyup', callConvert, false);
+input.addEventListener('blur', callConvert, false);		
+});	
 
 /********************/
 /* Display Products */
@@ -223,8 +263,8 @@ function generateProduct(product) {
 	products.appendChild(button);
 	
 	div.appendChild(createSection("Comment: " +product.comment));	
-	div.appendChild(createSection("Ask Amount: " + product.ask_amount));
-	div.appendChild(createSection("Respond Amount: " + product.respond_amount));	
+	div.appendChild(createSection("Ask Amount: " + product.ask_amount + " - (" + niceRound( product.ask_amount * .00001) + " Dero)" ));
+	div.appendChild(createSection("Respond Amount: " + product.respond_amount + " - (" + niceRound( product.respond_amount * .00001) + " Dero)"));	
 	div.appendChild(createSection("Out Message: " + (product.out_message_uuid ==1 ? "UUID":product.out_message)));
 
 	div.appendChild(createSection("Port: " + product.port));
@@ -237,7 +277,7 @@ function generateProduct(product) {
 
 		iaddress.appendChild(createSection("Integrated Address: " +val.iaddr));
 		iaddress.appendChild(createSection("Comment: " +val.comment));
-		iaddress.appendChild(createSection("Ask Amount: " +val.ask_amount));
+		iaddress.appendChild(createSection("Ask Amount: " +val.ask_amount + " - (" + niceRound( product.ask_amount * .00001) + " Dero)"));
 		iaddress.appendChild(createSection("Port: " +val.port));
 		let status = "inactive";
 		if(val.status == 1){
@@ -411,10 +451,12 @@ function editProducts(pid) {
 	
 	edit_product_modal.querySelector("#pid").value = editing.id;
 	edit_product_modal.querySelector("#comment").value = editing.comment;
-	edit_product_modal.querySelector("#out_message").value = editing.out_message;	
+	edit_product_modal.querySelector("#edit_out_message").value = editing.out_message;	
 	edit_product_modal.querySelector("#out_message_uuid").checked = (editing.out_message_uuid == 1? true:false);	
 	edit_product_modal.querySelector("#ask_amount").value = editing.ask_amount;
+	convert(edit_product_modal.querySelector("#ask_amount"));
 	edit_product_modal.querySelector("#respond_amount").value = editing.respond_amount;
+	convert(edit_product_modal.querySelector("#respond_amount"));
 	edit_product_modal.querySelector("#port").value = editing.port;	
 	
 	edit_product_modal.querySelector("#integrated_addresses").innerHTML ='';
@@ -425,7 +467,7 @@ function editProducts(pid) {
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Status Active?: ";
 		let checkbox = '<input id="out_message_uuid" name="iaddress_status['+iadd.id+']" '+(iadd.status == 1?"checked":"")+' type="checkbox" >';
 		
-		edit_product_modal.querySelector("#integrated_addresses").innerHTML += checkbox;
+		edit_product_modal.querySelector("#integrated_addresses").innerHTML += checkbox+"<hr>";;
 		
 	});
 	//edit_product_modal.querySelector("#integrated_addresses") = editing.port;	
