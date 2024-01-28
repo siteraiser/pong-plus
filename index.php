@@ -462,6 +462,7 @@ function editProducts(pid) {
 	
 	edit_product_modal.querySelector("#pid").value = editing.id;
 	edit_product_modal.querySelector("#comment").value = editing.comment;
+	edit_product_modal.querySelector("#edit_out_message").classList.remove("warning");
 	edit_product_modal.querySelector("#edit_out_message").value = editing.out_message;	
 	edit_product_modal.querySelector("#out_message_uuid").checked = (editing.out_message_uuid == 1? true:false);	
 	edit_product_modal.querySelector("#ask_amount").value = editing.ask_amount;
