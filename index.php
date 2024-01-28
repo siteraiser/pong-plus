@@ -471,7 +471,7 @@ function editProducts(pid) {
 	edit_product_modal.querySelector("#integrated_addresses").innerHTML ='';
 	editing.iaddress.forEach(function (iadd, index, array) {
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Integrated Address: "+iadd.iaddr+"<br>";
-		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Ask Amount: "+iadd.ask_amount+"<br>";
+		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Ask Amount: "+iadd.ask_amount+ " - (" + niceRound( iadd.ask_amount * .00001) + " Dero)"+"<br>";
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Port: "+iadd.port+"<br>";
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Status Active?: ";
 		let checkbox = '<input id="out_message_uuid" name="iaddress_status['+iadd.id+']" '+(iadd.status == 1?"checked":"")+' type="checkbox" >';
