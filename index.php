@@ -102,10 +102,10 @@
 			<input id="out_message" name="out_message" type="text" >
 		</label>
 		Only Use UUID <input id="add_out_message_uuid" name="out_message_uuid" type="checkbox" >
-		<label>Ask Amount
+		<label>Ask Amount (atomic units)
 			<input id="ask_amount" name="ask_amount" type="text" >
 		</label>
-		<label>Respond Amount
+		<label>Respond Amount (atomic units)
 			<input id="respond_amount" name="respond_amount" type="text" >
 		</label>
 		<label>Port
@@ -129,10 +129,10 @@
 		</label>
 		Only Use UUID <input id="out_message_uuid" name="out_message_uuid" type="checkbox" >
 		
-		<label>Ask Amount
+		<label>Ask Amount (atomic units)
 			<input id="ask_amount" name="ask_amount" type="text" >
 		</label>
-		<label>Respond Amount
+		<label>Respond Amount (atomic units)
 			<input id="respond_amount" name="respond_amount" type="text" >
 		</label>
 		<label>Port
