@@ -3,6 +3,7 @@
 <head>
 <style>
 .header > div{display:inline-block;vertical-align:middle;}
+.timer{float:right;}
 
 #products div{
 	border:1px solid grey;
@@ -85,6 +86,9 @@
 		<button id="show_add_modal">Add Product</button>
 	</div>
 	<div>
+		<button id="show_transactions">Show Transactions</button>
+	</div>
+	<div class="timer">
 		<button id="pause">Pause</button> - 
 		<div id="timer">0</div>
 	</div>
@@ -153,6 +157,7 @@ var products_array=[];
 var products = document.getElementById("products");
 var messages = document.getElementById("messages");
 var transactions = document.getElementById("transactions");
+var show_transactions_button = document.getElementById("show_transactions");
 
 var add_product_modal = document.getElementById("add_product_modal");
 var add_product_button = document.getElementById("add_product");
@@ -178,7 +183,7 @@ close_buttons.forEach((button) => {
 	button.addEventListener("click", (event) => {
 		event.target.parentElement.classList.add("hidden");
 		
-		if(event.target.parentElement.id!='messages'){
+		if(event.target.parentElement.id!='messages' && event.target.parentElement.id!='transactions'){
 			darken_layer.classList.add("hidden");
 		}
 	})
@@ -190,6 +195,10 @@ clear_buttons.forEach((button) => {
 	})
 });	
 
+
+show_transactions_button.addEventListener("click", (event) => {
+	transactions.classList.remove("hidden");
+})
 
 
 
