@@ -17,7 +17,6 @@ require_once('walletapi.php');
 
 
 
-//also in initialize...
 function toggleIAddr($pdo,$id,$status){
 	
 	
