@@ -215,6 +215,7 @@ function getStringSize(){
 }
 
 out_messages.forEach((input) => {
+input.addEventListener('input', getStringSize, false);
 input.addEventListener('keyup', getStringSize, false);
 input.addEventListener('blur', getStringSize, false);		
 });	
@@ -233,6 +234,7 @@ function callConvert(){
 	convert(event.target);
 }
 amount_inputs.forEach((input) => {
+input.addEventListener('input', callConvert, false);
 input.addEventListener('keyup', callConvert, false);
 input.addEventListener('blur', callConvert, false);		
 });	
