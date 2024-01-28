@@ -286,7 +286,7 @@ function generateProduct(product) {
 
 		iaddress.appendChild(createSection("Integrated Address: " +val.iaddr));
 		iaddress.appendChild(createSection("Comment: " +val.comment));
-		iaddress.appendChild(createSection("Ask Amount: " +val.ask_amount + " - (" + niceRound( product.ask_amount * .00001) + " Dero)"));
+		iaddress.appendChild(createSection("Ask Amount: " +val.ask_amount + " - (" + niceRound( val.ask_amount * .00001) + " Dero)"));
 		iaddress.appendChild(createSection("Port: " +val.port));
 		let status = "inactive";
 		if(val.status == 1){
