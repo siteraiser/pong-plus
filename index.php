@@ -26,23 +26,18 @@
 .modal {
 	background-color:#fff;
 	box-shadow: 10px 10px 5px grey;
-	max-width:500px;
-
+	box-sizing: border-box;
+	max-width: 500px;
+	max-height: 100%;	
 	top: 0; 
 	left: 0; 
 	right: 0; 
 	margin-left: auto; 
 	margin-right: auto; 
 	z-index:1;
-	padding:20px;
-	
-	
-	position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-
-  overflow: auto; /* Enable scroll if needed */
-	
-	
+	padding: 20px;	
+	position: fixed;
+	overflow: auto;	
 }
 
 
@@ -251,7 +246,7 @@ function createSection(section){
 /* load out the products */
 function generateProduct(product) {
 	
-	console.log(product);
+	//console.log(product);
 	
 	let div = document.createElement('div');
 	//let br = document.createElement('br');
@@ -329,7 +324,7 @@ function initialize(runit) {
 		});
 
 		const result = await response.json();			
-		console.log("Success:", result);
+		//console.log("Success:", result);
 		products_array=result.products;
 		displayProducts(products_array);
 		runit();
@@ -425,6 +420,7 @@ function editProduct(form) {
 				for(var key in result.errors){
 					msgs += result.errors[key] +' ';				
 				}
+				//uncheck the boxes that can't be checked
 				for(var key in result.failed_ia_ids){
 					let failed_ia_id = result.failed_ia_ids[key];	
 					form.querySelector('input[name="iaddress_status['+failed_ia_id+']"]').checked = false;;
