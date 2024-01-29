@@ -425,6 +425,10 @@ function editProduct(form) {
 				for(var key in result.errors){
 					msgs += result.errors[key] +' ';				
 				}
+				for(var key in result.failed_ia_ids){
+					let failed_ia_id = result.failed_ia_ids[key];	
+					form.querySelector('input[name="iaddress_status['+failed_ia_id+']"]').checked = false;;
+				}
 				messages.querySelector("#message_list").innerHTML = msgs;
 				messages.classList.remove("hidden");
 			}
