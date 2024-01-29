@@ -1,4 +1,5 @@
 # pong-plus
+There is a problem with not being able to confirm if a transaction was picked up. Not recommended for use until resolved!<br />
 Dero pong server with UI. Designed on PHP 7.4  <br />
 Another take on the Dero pong server by CaptainDero and SecretNameBasis.  <br />
 Create a db with name pong. dbconn.php contains the credentials.  <br />
