@@ -292,7 +292,7 @@ foreach($notProcessed as $tx){
 			"out_amount"=>$respond_amount,
 			"port"=>$tx['port'],
 			"out_message"=>$out_message,
-			"out_message_uuid"=>($settings !==false)?$settings['out_message_uuid']:'')
+			"out_message_uuid"=>($settings !==false?$settings['out_message_uuid']:'')
 			];
 			
 			
