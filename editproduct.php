@@ -232,9 +232,9 @@ if(!empty($_POST)){
 		}
 	}
 	
-	
+	$failed_ia_ids = [];
 	//Save Product
-	if(empty($errors)){		
+	if(empty($errors)){	
 		//handle the iaddress status checkboxes
 		$changes=false;
 		$active = [];
@@ -253,7 +253,8 @@ if(!empty($_POST)){
 				 if($iaddr['status'] == 0){
 					$res = integratedAddressExistsElsewhere($pdo,$iaddr);
 					if($res !== false){
-						$errors[] = "Integrated address already exists for \"{$res['comment']}\", and can only be used for one product at a time with ask amount {$res['ask_amount']} and active integrated address: ".$res['iaddr'];
+						$failed_ia_ids[] = $iaddr['id'];
+						$errors[] = "Integrated address already exists for \"{$res['comment']}\", and can only be used for one product at a time. Ask amount {$res['ask_amount']} and active integrated address: {$res['iaddr']} ";
 					}else{
 						$changes = toggleIAddr($pdo,$iaddr['id'],1);
 					}
@@ -287,7 +288,7 @@ if(empty($errors)){
 	}
 	$response = ["success"=>true,"products"=>$product_results];
 }else{	
-	$response = ["success"=>false,"errors"=>$errors];
+	$response = ["success"=>false,"errors"=>$errors,"failed_ia_ids"=>$failed_ia_ids];
 }
 
 
