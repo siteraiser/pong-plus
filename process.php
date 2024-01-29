@@ -229,7 +229,7 @@ $UUID = new UUID;
 foreach($notProcessed as $tx){
 	
 	$settings = getIAsettings($pdo,$tx);
-	$out_uuid='';
+
 	if($settings !== false){
 		$respond_amount = $settings['respond_amount'];
 		$address = $tx['buyer_address'];
