@@ -57,7 +57,7 @@ function sameIntegratedAddress($pdo){
 	
 	$stmt=$pdo->prepare(
 	"SELECT * FROM i_addresses 	
-	WHERE i_addresses.product_id = ? AND i_addresses.comment = ? AND i_addresses.ask_amount = ? AND i_addresses.port = ? AND i_addresses.status = '1'");
+	WHERE i_addresses.product_id = ? AND i_addresses.comment = ? AND i_addresses.ask_amount = ? AND i_addresses.port = ?" );// AND i_addresses.status = '1'
 	$stmt->execute([$_POST['pid'],$_POST['comment'],$_POST['ask_amount'],$_POST['port']]);		
 	if($stmt->rowCount()==0){
 		return false;
@@ -131,12 +131,24 @@ function integratedAddressExists($pdo,$iaddr){
 	return ["comment"=>$row['comment'],"ask_amount"=>$row['ask_amount'],"port"=>$row['port']];
 }
 
+function integratedAddressExistsElsewhere($pdo,$iaddr){
+
+	$stmt=$pdo->prepare("SELECT * FROM i_addresses WHERE iaddr = ? AND status = '1' AND NOT(id = ?) AND NOT(product_id = ?)");
+	$stmt->execute([$iaddr['iaddr'],$iaddr['id'],$iaddr['product_id']]);		
+	
+	if($stmt->rowCount()==0){
+		return false;
+	}
+	return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
 function portExists($pdo,$port,$ask_amount){
 
 	$stmt=$pdo->prepare(
 	"SELECT * FROM i_addresses 	
 	INNER JOIN products ON i_addresses.product_id = products.id 
-	WHERE i_addresses.port = ? AND i_addresses.status = '1' AND products.ask_amount = ?");
+	WHERE i_addresses.port = ? AND i_addresses.status = '1' AND i_addresses.ask_amount = ?");
 	$stmt->execute([$port,$ask_amount]);		
 	if($stmt->rowCount()==0){
 		return false;
@@ -191,7 +203,7 @@ if(!empty($_POST)){
 	
 	
 	$ia = '';
-	$same_ia = sameIntegratedAddress($pdo);
+	$same_ia = sameIntegratedAddress($pdo);//no changes to comment, amount or port and is same product id (no need to generate a new one...)
 	//Generate integrated address
 	if(empty($errors)){	
 		
@@ -207,6 +219,7 @@ if(!empty($_POST)){
 	//See if integrated address exists 
 	if(empty($errors) && !$same_ia){
 		$result = integratedAddressExists($pdo,$ia);
+		//could check if it is disabled and restore it if needed
 		if($result !== false){
 			$errors[] = "Integrated address already exists for \"{$result['comment']}\". Change comment, ask amount or port.";
 		}
@@ -221,7 +234,8 @@ if(!empty($_POST)){
 	
 	
 	//Save Product
-	if(empty($errors)){			
+	if(empty($errors)){		
+		//handle the iaddress status checkboxes
 		$changes=false;
 		$active = [];
 		if(isset($_POST['iaddress_status'])){
@@ -235,8 +249,14 @@ if(!empty($_POST)){
 
 		foreach($iadds as $iaddr){
 			if(in_array($iaddr['id'],$active)){
-				if($iaddr['status'] == 0){
-					$changes = toggleIAddr($pdo,$iaddr['id'],1);
+				//don't allow active ia for more
+				 if($iaddr['status'] == 0){
+					$res = integratedAddressExistsElsewhere($pdo,$iaddr);
+					if($res !== false){
+						$errors[] = "Integrated address already exists for \"{$res['comment']}\", and can only be used for one product at a time with ask amount {$res['ask_amount']} and active integrated address: ".$res['iaddr'];
+					}else{
+						$changes = toggleIAddr($pdo,$iaddr['id'],1);
+					}
 				}
 			}else{//not submitted as active but is then deactivate
 				if($iaddr['status'] == 1){
