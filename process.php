@@ -229,7 +229,7 @@ $UUID = new UUID;
 foreach($notProcessed as $tx){
 	
 	$settings = getIAsettings($pdo,$tx);
-	
+	$out_uuid='';
 	if($settings !== false){
 		$respond_amount = $settings['respond_amount'];
 		$address = $tx['buyer_address'];
@@ -283,7 +283,7 @@ foreach($notProcessed as $tx){
 	} 
 	if(empty($errors)){
 		$result = markAsProcessed($pdo,$tx['txid']);
-		if($result !== false && $settings !== false){
+		if($result !== false){
 			$response = (object)[
 			"incoming_id"=>$tx['id'],
 			"txid"=>$responseTXID,
@@ -292,7 +292,7 @@ foreach($notProcessed as $tx){
 			"out_amount"=>$respond_amount,
 			"port"=>$tx['port'],
 			"out_message"=>$out_message,
-			"out_message_uuid"=>$settings['out_message_uuid']
+			"out_message_uuid"=>($settings !==false)?$settings['out_message_uuid']:'')
 			];
 			
 			
