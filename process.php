@@ -263,14 +263,15 @@ foreach($notProcessed as $tx){
 	}else{
 		//No mathcing products / I. Addresses found
 		//Send Refund to buyer
+		$respond_amount = $tx['amount'];
+		$address = $tx['buyer_address'];
+		$out_message = "Integrated Address Inactive.";	
+		
 		$payload_result = payload($ip, $port, $user, $pass, $respond_amount, $address, $scid, $out_message);
 		$payload_result = json_decode($payload_result);
 		
 		//$payload_result ='';
-		
-		$respond_amount = $tx['amount'];
-		$address = $tx['buyer_address'];
-		$out_message = "Integrated Address Inactive.";		
+					
 		$responseTXID = '';
 		//Ensure that the response transfer is successful
 		if($payload_result != null && $payload_result->result){
