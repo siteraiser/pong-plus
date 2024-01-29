@@ -270,8 +270,8 @@ function generateProduct(product) {
 	
 	div.appendChild(createSection("Comment: " +product.comment));	
 	div.appendChild(createSection("Ask Amount: " + product.ask_amount + " - (" + niceRound( product.ask_amount * .00001) + " Dero)" ));
-	div.appendChild(createSection("Respond Amount: " + product.respond_amount + " - (" + niceRound( product.respond_amount * .00001) + " Dero)"));	
-	div.appendChild(createSection("Out Message: " + (product.out_message_uuid ==1 ? "UUID":product.out_message)));
+	div.appendChild(createSection("Respond Amount: " + product.respond_amount + " - (" + niceRound( product.respond_amount * .00001) + " Dero) - Applies to all I. Addrs. for this product"));	
+	div.appendChild(createSection("Out Message: " + (product.out_message_uuid ==1 ? "UUID":product.out_message) + " - Applies to all I. Addrs. for this product"));
 
 	div.appendChild(createSection("Port: " + product.port));
 
