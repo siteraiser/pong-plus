@@ -249,7 +249,7 @@ if(!empty($_POST)){
 
 		foreach($iadds as $iaddr){
 			if(in_array($iaddr['id'],$active)){
-				//don't allow active ia for more
+				//don't allow active ia for more than one product
 				 if($iaddr['status'] == 0){
 					$res = integratedAddressExistsElsewhere($pdo,$iaddr);
 					if($res !== false){
