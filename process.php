@@ -281,9 +281,9 @@ foreach($notProcessed as $tx){
 			$errors[] = "Error Refunding Transaction {$tx['txid']}";
 		}
 	} 
-	if(empty($errors) && $settings !== false){
+	if(empty($errors)){
 		$result = markAsProcessed($pdo,$tx['txid']);
-		if($result !== false){
+		if($result !== false && $settings !== false){
 			$response = (object)[
 			"incoming_id"=>$tx['id'],
 			"txid"=>$responseTXID,
