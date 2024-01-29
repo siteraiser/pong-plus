@@ -62,7 +62,7 @@ function insertIntegrateAddress($pdo,$product_id,$iaddr){
 function integratedAddressExists($pdo,$iaddr){
 
 	$stmt=$pdo->prepare("SELECT * FROM i_addresses INNER JOIN products ON i_addresses.product_id = products.id 
-	WHERE iaddr = ? AND i_addresses.status = '1'");
+	WHERE iaddr = ? ");//AND i_addresses.status = '1'
 	$stmt->execute([$iaddr]);		
 	if($stmt->rowCount()==0){
 		return false;
