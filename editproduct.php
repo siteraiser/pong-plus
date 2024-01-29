@@ -191,7 +191,7 @@ if(!empty($_POST)){
 		}
 	}
 	//Check if port is being used with same price
-	if(empty($errors)){
+	if(empty($errors) && !$same_ia){
 		$result = portExists($pdo,$_POST['port'],$_POST['ask_amount']);
 		if($result !== false){
 			$errors[] = "Port already exists for \"{$result['comment']}\" with ask amount {$_POST['ask_amount']} and active integrated address: ".$result['iaddr'];
