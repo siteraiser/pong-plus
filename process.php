@@ -217,13 +217,11 @@ function insertResponse($pdo,$response){
 
 
 
-
 $notProcessed=[];
 $new=unprocessedTxs($pdo);
 if($new !== false){
 	$notProcessed = $new;
 }
-
 
 
 $type = '';	
@@ -233,15 +231,16 @@ foreach($notProcessed as $tx){
 	$settings = getIAsettings($pdo,$tx);
 	
 	if($settings !== false){
-	
+		$respond_amount = $settings['respond_amount'];
+		$address = $tx['buyer_address'];
+		
 		if($settings['out_message_uuid'] == 1){
 			$customAPIAddress = $settings['out_message'];			
 			$settings['out_message'] = $UUID->v4();
-			//send a curl request to endpoint... 
+			//send a curl request to endpoint ... 
 			//$customAPIAddress
 		}
-		$respond_amount = $settings['respond_amount'];
-		$address = $tx['buyer_address'];
+		
 		$out_message = $settings['out_message'];
 		$responseTXID = '';
 		//Send Response to buyer
