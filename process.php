@@ -117,23 +117,24 @@ function makeTxObject($pdo,$entry){
 	
 	return (object)$tx;
 }
-	
+$messages = [];
+$errors = [];
 //$notProcessed=[];
 //Get transfers and save them if they are new and later than the db creation time.	
 $export_transfers_result =	export_transfers($ip,$port,$user,$pass);
 $export_transfers_result = json_decode($export_transfers_result);
-foreach($export_transfers_result->result->entries as $entry){		
-	//See if there is a payload
-	if(isset($entry->payload_rpc)){
-		$tx = makeTxObject($pdo,$entry);
-		insertNewTransaction($pdo,$tx);
-		/*if($new !== false){
-			$notProcessed[] = $new;
+if($export_transfers_result === NULL){
+	$errors[] = "Wallet Connection Error.";
+}else{
+
+	foreach($export_transfers_result->result->entries as $entry){		
+		//See if there is a payload
+		if(isset($entry->payload_rpc)){
+			$tx = makeTxObject($pdo,$entry);
+			insertNewTransaction($pdo,$tx);
 		}
-		*/		
 	}
-}
-	
+}	
 	
 
 function unprocessedTxs($pdo){
@@ -224,8 +225,7 @@ if($new !== false){
 }
 
 
-$messages = [];
-$errors = [];
+
 $type = '';	
 $UUID = new UUID;	
 foreach($notProcessed as $tx){
