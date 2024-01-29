@@ -1,25 +1,11 @@
-<?php /*
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, X-Requested-With");
-*/
-//$data = json_decode(file_get_contents('php://input'), true);
+<?php 
 
 require_once('dbconn.php');
-
 require_once('walletapi.php');
 
 
 
-
-
-
-
-
-
-function toggleIAddr($pdo,$id,$status){
-	
-	
+function toggleIAddr($pdo,$id,$status){	
 	
 	$query='UPDATE i_addresses SET 
 		status=:status
@@ -98,25 +84,6 @@ function insertIntegratedAddress($pdo,$product_id,$iaddr){
 	return $pdo->lastInsertId('id');
 }
 
-/*
-function updateIntegrateAddress($pdo,$product_id,$iaddr){
-
-	$query='UPDATE i_addresses SET  		
-		status=:status
-		WHERE id=:id';	
-	$stmt=$this->pdo->prepare($query);
-	$stmt->execute(array(
-		':status'=>isset($_POST['status']) ? 1 : 0,
-		':id'=>$_POST['pid']));	
-
-
-
-	if($stmt->rowCount()==0){
-		return false;
-	}
-	return true;
-}
-*/
 
 function integratedAddressExists($pdo,$iaddr){
 
@@ -219,13 +186,12 @@ if(!empty($_POST)){
 	//See if integrated address exists 
 	if(empty($errors) && !$same_ia){
 		$result = integratedAddressExists($pdo,$ia);
-		//could check if it is disabled and restore it if needed
 		if($result !== false){
 			$errors[] = "Integrated address already exists for \"{$result['comment']}\". Change comment, ask amount or port.";
 		}
 	}
 	//Check if port is being used with same price
-	if(empty($errors) && !$same_ia){
+	if(empty($errors)){
 		$result = portExists($pdo,$_POST['port'],$_POST['ask_amount']);
 		if($result !== false){
 			$errors[] = "Port already exists for \"{$result['comment']}\" with ask amount {$_POST['ask_amount']} and active integrated address: ".$result['iaddr'];
