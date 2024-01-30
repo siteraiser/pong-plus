@@ -1,8 +1,8 @@
 <?php 
 
 require_once('dbconn.php');
-require_once('walletapi.php');
-
+require_once($_SERVER["DOCUMENT_ROOT"]."/classes/DeroApi.php");
+$DeroApi = new DeroApi;	
 
 
 function toggleIAddr($pdo,$id,$status){	
@@ -174,7 +174,7 @@ if(!empty($_POST)){
 	//Generate integrated address
 	if(empty($errors)){	
 		
-		$export_address_result = json_decode(export_iaddress($ip,$port,$user,$pass,$_POST['port'],$_POST['comment'],$_POST['ask_amount']));
+		$export_address_result = json_decode($DeroApi->makeIntegratedAddress($_POST['port'],$_POST['comment'],$_POST['ask_amount']));
 		if($export_address_result ==''){			
 			$errors[] = "Couldn't generate integrated address";
 		}else{
