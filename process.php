@@ -181,12 +181,20 @@ foreach($unConfirmed as $out_message){
 	$time_utc = $given->format("Y-m-d H:i:s");
 	
 	if($out_message['time_utc'] < $time_utc){
-		$check_transaction_result = check_transaction($ip,$port,$user,$pass,$out_message['txid']);//110ae6ce252384f1b4f4c53d26817ba4fb26811d2f6f5a112bcdbb2afe3f65d8
+		$check_transaction_result = check_transaction($ip,$port,$user,$pass,$out_message['txid']);
 		$check_transaction_result = json_decode($check_transaction_result);
 
 
 		if(!isset($check_transaction_result->errors) && isset($check_transaction_result->result)){		
 			markResAsConfirmed($pdo,$out_message['txid']);
+			
+				//send post message to your web api here... 
+				if($out_message['out_message_uuid'] == 1){
+				//$customAPIAddress = $out_message['out_message'];	
+
+				
+				}
+			
 		}else{
 			removeResponse($pdo,$out_message['txid']);
 			markIncAsNotProcessed($pdo,$out_message['incoming_id']);		
@@ -316,9 +324,10 @@ foreach($notProcessed as $tx){
 		$address = $tx['buyer_address'];
 		
 		if($settings['out_message_uuid'] == 1){
-			$customAPIAddress = $settings['out_message'];			
+			//$customAPIAddress = $settings['out_message'];			
 			$settings['out_message'] = $UUID->v4();
-			//send a curl request to endpoint ... 
+			//No longer safe to assume the transaction went through... 
+			//send a curl request to endpoint on line:
 			//$customAPIAddress
 		}
 		
