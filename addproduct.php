@@ -1,13 +1,11 @@
-<?php /*
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, X-Requested-With");
-*/
-//$data = json_decode(file_get_contents('php://input'), true);
+<?php 
 
 require_once('dbconn.php');
 
-require_once('walletapi.php');
+//require_once('walletapi.php');
+require_once($_SERVER["DOCUMENT_ROOT"]."/classes/DeroApi.php");
+$DeroApi = new DeroApi;	
+
 
 //also in initialize...
 function getProductsList($pdo, $product_id){
@@ -128,7 +126,7 @@ if(!empty($_POST)){
 	}
 	//Generate integrated address
 	if(empty($errors)){	
-		$export_address_result = json_decode(export_iaddress($ip,$port,$user,$pass,$_POST['port'],$_POST['comment'],$_POST['ask_amount']));
+		$export_address_result = json_decode($DeroApi->makeIntegratedAddress($_POST['port'],$_POST['comment'],$_POST['ask_amount']));
 		if($export_address_result ==''){			
 			$errors[] = "Couldn't generate integrated address";
 		}
