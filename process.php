@@ -342,7 +342,7 @@ foreach($notProcessed as $tx){
 			$type="sale";
 			$responseTXID = $payload_result->result->txid;	
 
-			$messages[] = "New Transaction for \"{$settings['comment']}\",  Ask Amount:{$tx['amount']}, Port:{$tx['port']} with Out Message:\"{$settings['out_message']}\" and Respond Amount:{$settings['respond_amount']} txid:({$tx['txid']}) response txid:($responseTXID)";
+			$messages[] = "Responding to Transaction for \"{$settings['comment']}\",  Ask Amount:{$tx['amount']}, Port:{$tx['port']} with Out Message:\"{$settings['out_message']}\" and Respond Amount:{$settings['respond_amount']} txid:({$tx['txid']}) response txid:($responseTXID)";
 		}else{
 			$errors[] = "Error Processing Transaction {$tx['txid']}";
 		}
@@ -366,7 +366,7 @@ foreach($notProcessed as $tx){
 			$responseTXID = $payload_result->result->txid;
 			
 
-			$messages[] = "New Refund for Ask Amount:{$tx['amount']} and Port:{$tx['port']} to $address!";
+			$messages[] = "Initiating Refund for Ask Amount:{$tx['amount']} and Port:{$tx['port']} to $address!";
 		}else{
 			$errors[] = "Error Refunding Transaction {$tx['txid']}";
 		}
