@@ -53,7 +53,7 @@ $json = json_encode($json);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
 	$output = curl_exec($ch);
 	
-	echo connectionErrors($ch);
+	connectionErrors($ch);
 
 	curl_close($ch);
 
