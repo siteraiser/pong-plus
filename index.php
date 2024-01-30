@@ -100,8 +100,8 @@
 		<label>Comment
 			<input id="comment" name="comment" type="text" >
 		</label>
-		<label>Out Message (max 144b)
-			<input id="out_message" name="out_message" type="text" maxlength="144">
+		<label>Out Message (max 128b)
+			<input id="out_message" name="out_message" type="text" maxlength="128">
 		</label>
 		Only Use UUID <input id="add_out_message_uuid" name="out_message_uuid" type="checkbox" >
 		<label>Ask Amount (atomic units)
@@ -126,8 +126,8 @@
 		<label>Comment
 			<input id="comment" name="comment" type="text" >
 		</label>
-		<label>Out Message (max 144b)
-			<input id="edit_out_message" name="out_message" type="text" maxlength="144">
+		<label>Out Message (max 128b)
+			<input id="edit_out_message" name="out_message" type="text" maxlength="128">
 		</label>
 		Only Use UUID <input id="out_message_uuid" name="out_message_uuid" type="checkbox" >
 		
@@ -202,7 +202,7 @@ function getStringSize(){
 	 
 	let size =  new Blob([event.target.value]).size;
 	
-	if(size > 143){
+	if(size > 128){
 		event.target.classList.add("warning");
 	}else{
 		event.target.classList.remove("warning");
