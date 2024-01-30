@@ -377,7 +377,7 @@ foreach($notProcessed as $tx){
 		$given = new DateTime();
 		$given->setTimezone(new DateTimeZone("UTC"));	
 		$time_utc = $given->format("Y-m-d H:i:s");
-		
+		//could save time of next block instead of waiting 18 seconds for a confirmation check turbo mode
 		if($result !== false){
 			$response = (object)[
 			"incoming_id"=>$tx['id'],
