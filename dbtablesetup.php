@@ -58,6 +58,7 @@ CREATE TABLE responses (
 	port smallint(6) NULL,	
 	out_message varchar(144) NULL,
 	out_message_uuid tinyint(1) DEFAULT 0,
+	confirmed tinyint(1) DEFAULT 0,
 	time_utc timestamp NULL,
 	lastupdate timestamp DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (id)
