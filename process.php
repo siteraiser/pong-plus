@@ -1,7 +1,6 @@
 <?php
 
 require_once('dbconn.php');
-
 require_once('walletapi.php');
 class UUID {
 	//Thank you commenters in the PHP docs
@@ -41,7 +40,6 @@ function getInstalledTime($pdo){
 }
 
 define('INSTALL_TIME_UTC', (string)getInstalledTime($pdo));
-
 
 function txExists($pdo,$tx){
 
@@ -93,7 +91,6 @@ function insertNewTransaction($pdo,$tx){
 	}
 	return $tx;
 }
-
 
 function makeTxObject($pdo,$entry){
 	
@@ -171,10 +168,11 @@ function markIncAsNotProcessed($pdo,$id){
 		return false;
 	}
 }
-
+$messages = [];
 $unConfirmed = unConfirmedTxs($pdo);
-
+//go through the resposes that haven't been confirmed.
 foreach($unConfirmed as $out_message){
+	//make sure the response is at least one block old before checking.
 	$given = new DateTime();
 	$given->setTimezone(new DateTimeZone("UTC"));	
 	$given->modify('-18 seconds');
@@ -184,18 +182,18 @@ foreach($unConfirmed as $out_message){
 		$check_transaction_result = check_transaction($ip,$port,$user,$pass,$out_message['txid']);
 		$check_transaction_result = json_decode($check_transaction_result);
 
-
+		//succesfully confirmed 
 		if(!isset($check_transaction_result->errors) && isset($check_transaction_result->result)){		
-			markResAsConfirmed($pdo,$out_message['txid']);
-			
-				//send post message to your web api here... 
-				if($out_message['out_message_uuid'] == 1){
+			markResAsConfirmed($pdo,$out_message['txid']);	
+			$messages[] = $out_message['type']." confirmed with txid:".$out_message['txid'];	
+			//send post message to your web api here... 
+			if($out_message['out_message_uuid'] == 1){
 				//$customAPIAddress = $out_message['out_message'];	
-
 				
-				}
+			}
 			
 		}else{
+			//delete the response reccord and set the incoming to not processed.
 			removeResponse($pdo,$out_message['txid']);
 			markIncAsNotProcessed($pdo,$out_message['incoming_id']);		
 		}
@@ -204,7 +202,7 @@ foreach($unConfirmed as $out_message){
 
 
 
-$messages = [];
+
 $errors = [];
 //$notProcessed=[];
 //Get transfers and save them if they are new and later than the db creation time.	
@@ -327,7 +325,7 @@ foreach($notProcessed as $tx){
 			//$customAPIAddress = $settings['out_message'];			
 			$settings['out_message'] = $UUID->v4();
 			//No longer safe to assume the transaction went through... 
-			//send a curl request to endpoint on line:
+			//send a curl request to endpoint on line: 190
 			//$customAPIAddress
 		}
 		
