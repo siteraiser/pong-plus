@@ -24,6 +24,55 @@ function connectionErrors($ch){
 
 //API funtions
 
+
+
+
+//Gets the list of incoming transfers
+function check_transaction($ip,$port,$user,$pass,$transaction_id){
+
+$data = '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "GetTransferbyTXID",
+    "params": {
+        "txid": "'.$transaction_id.'"
+    }
+}';
+
+$json = json_decode($data,true);
+$json = json_encode($json);
+
+	$ch = curl_init("http://$ip:$port/json_rpc");
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS,$json);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [ 		
+		"Authorization: Basic " . base64_encode($user.':'.$pass),
+		"Content-Type: application/json"
+	]);
+
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+	$output = curl_exec($ch);
+	
+	echo connectionErrors($ch);
+
+	curl_close($ch);
+
+	return $output;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Creates a new integrated address
 //When used as a send to address it will display the in message and fill in the correct amounts as well as allowing a port to be defined 
 function export_iaddress($ip,$port,$user,$pass,$d_port,$in_message,$ask_amount){
