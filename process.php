@@ -117,6 +117,85 @@ function makeTxObject($pdo,$entry){
 	
 	return (object)$tx;
 }
+
+
+//check responses to ensure they went through, if not mark as not processed 
+function unConfirmedTxs($pdo){
+
+	$stmt=$pdo->prepare("SELECT * FROM responses WHERE confirmed = '0'");
+	$stmt->execute([]);		
+	if($stmt->rowCount()==0){
+		return [];
+	}
+	
+	return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+function removeResponse($pdo,$txid){
+
+	$stmt=$pdo->prepare("DELETE FROM responses WHERE txid = ?");
+	$stmt->execute([$txid]);		
+	if($stmt->rowCount()==0){
+		return [];
+	}
+	
+	return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function markResAsConfirmed($pdo,$txid){
+
+	$query='UPDATE responses SET 
+		confirmed=:confirmed
+		WHERE txid=:txid';	
+	
+	$stmt=$pdo->prepare($query);
+	$stmt->execute(array(
+		':confirmed'=>1,
+		':txid'=>$txid));				
+				
+	if($stmt->rowCount()==0){
+		return false;
+	}
+}
+function markIncAsNotProcessed($pdo,$id){
+
+	$query='UPDATE incoming SET 
+		processed=:processed
+		WHERE id=:id';	
+	
+	$stmt=$pdo->prepare($query);
+	$stmt->execute(array(
+		':processed'=>0,
+		':id'=>$id));				
+				
+	if($stmt->rowCount()==0){
+		return false;
+	}
+}
+
+$unConfirmed = unConfirmedTxs($pdo);
+
+foreach($unConfirmed as $out_message){
+	$given = new DateTime();
+	$given->setTimezone(new DateTimeZone("UTC"));	
+	$given->modify('-18 seconds');
+	$time_utc = $given->format("Y-m-d H:i:s");
+	
+	if($out_message['time_utc'] < $time_utc){
+		$check_transaction_result = check_transaction($ip,$port,$user,$pass,$out_message['txid']);//110ae6ce252384f1b4f4c53d26817ba4fb26811d2f6f5a112bcdbb2afe3f65d8
+		$check_transaction_result = json_decode($check_transaction_result);
+
+
+		if(!isset($check_transaction_result->errors) && isset($check_transaction_result->result)){		
+			markResAsConfirmed($pdo,$out_message['txid']);
+		}else{
+			removeResponse($pdo,$out_message['txid']);
+			markIncAsNotProcessed($pdo,$out_message['incoming_id']);		
+		}
+	}
+}
+
+
+
 $messages = [];
 $errors = [];
 //$notProcessed=[];
@@ -189,10 +268,11 @@ function insertResponse($pdo,$response){
 		out_amount,
 		port,
 		out_message,
-		out_message_uuid
+		out_message_uuid,
+		time_utc
 		)
 		VALUES
-		(?,?,?,?,?,?,?,?)
+		(?,?,?,?,?,?,?,?,?)
 		';	
 	
 	$array=array(
@@ -203,7 +283,8 @@ function insertResponse($pdo,$response){
 		$response->out_amount,
 		$response->port,
 		$response->out_message,
-		$response->out_message_uuid
+		$response->out_message_uuid,
+		$response->time_utc
 		);				
 			
 	$stmt=$pdo->prepare($query);
@@ -253,7 +334,7 @@ foreach($notProcessed as $tx){
 		if($payload_result != null && $payload_result->result){
 			$type="sale";
 			$responseTXID = $payload_result->result->txid;	
-		
+
 			$messages[] = "New Transaction for \"{$settings['comment']}\",  Ask Amount:{$tx['amount']}, Port:{$tx['port']} with Out Message:\"{$settings['out_message']}\" and Respond Amount:{$settings['respond_amount']} txid:({$tx['txid']}) response txid:($responseTXID)";
 		}else{
 			$errors[] = "Error Processing Transaction {$tx['txid']}";
@@ -276,6 +357,8 @@ foreach($notProcessed as $tx){
 		if($payload_result != null && $payload_result->result){
 			$type="refund";
 			$responseTXID = $payload_result->result->txid;
+			
+
 			$messages[] = "New Refund for Ask Amount:{$tx['amount']} and Port:{$tx['port']} to $address!";
 		}else{
 			$errors[] = "Error Refunding Transaction {$tx['txid']}";
@@ -283,6 +366,11 @@ foreach($notProcessed as $tx){
 	} 
 	if(empty($errors)){
 		$result = markAsProcessed($pdo,$tx['txid']);
+		
+		$given = new DateTime();
+		$given->setTimezone(new DateTimeZone("UTC"));	
+		$time_utc = $given->format("Y-m-d H:i:s");
+		
 		if($result !== false){
 			$response = (object)[
 			"incoming_id"=>$tx['id'],
@@ -292,7 +380,8 @@ foreach($notProcessed as $tx){
 			"out_amount"=>$respond_amount,
 			"port"=>$tx['port'],
 			"out_message"=>$out_message,
-			"out_message_uuid"=>($settings !==false?$settings['out_message_uuid']:'')
+			"out_message_uuid"=>($settings !==false?$settings['out_message_uuid']:''),
+			"time_utc"=>$time_utc
 			];
 			
 			
