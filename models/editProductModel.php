@@ -139,7 +139,7 @@ class editProductModel extends App {
 			':out_message'=>$_POST['out_message'],
 			':out_message_uuid'=>isset($_POST['out_message_uuid']) ? 1 : 0,
 			':ask_amount'=>$_POST['ask_amount'],
-			':respond_amount'=>($_POST['respond_amount']==''?0:$_POST['respond_amount']),
+			':respond_amount'=>($_POST['respond_amount']=='' || $_POST['respond_amount'] < 1 ? 1 :$_POST['respond_amount']),
 			':port'=>$_POST['port'],
 			':status'=>isset($_POST['status']) ? 1 : 0,
 			':id'=>$_POST['pid']));				
