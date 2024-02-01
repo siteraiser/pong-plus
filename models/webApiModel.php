@@ -23,7 +23,7 @@ class webApiModel{
 
 	//API funtions
 
-	//Gets the list of incoming transfers
+	//Sends to your website
 	function newTX($tx){
 
 	$data = '{
