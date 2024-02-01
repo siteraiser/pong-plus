@@ -96,7 +96,7 @@ class addProductModel extends App {
 			$_POST['out_message'],
 			isset($_POST['out_message_uuid']) ? 1 : 0,
 			$_POST['ask_amount'],
-			($_POST['respond_amount']==''?0:$_POST['respond_amount']),
+			($_POST['respond_amount']=='' || $_POST['respond_amount'] < 1 ? 1 :$_POST['respond_amount']),
 			$_POST['port'],
 			1
 			);				
