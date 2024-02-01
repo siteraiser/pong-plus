@@ -7,8 +7,12 @@ class Product extends App {
 		$errors=[];
 
 		if(!empty($_POST)){
-			if($_POST['comment']=='' || $_POST['ask_amount'] ==  '' || $_POST['port'] ==  '' ){		
-				$errors[] = "Required fields missing";
+			if($_POST['comment']=='' || $_POST['ask_amount'] == '' || $_POST['ask_amount'] < 1 || $_POST['port'] ==  '' ){		
+				if($_POST['ask_amount'] < 1){
+					$errors[] = "Minumum Ask Amount is 1";
+				}else{
+					$errors[] = "Required fields missing";
+				}
 			}
 			//Generate integrated address
 			if(empty($errors)){	
@@ -70,8 +74,12 @@ class Product extends App {
 		$errors=[];
 
 		if(!empty($_POST)){			
-			if($_POST['comment']=='' || $_POST['ask_amount'] ==  '' || $_POST['port'] ==  '' ){		
-				$errors[] = "Required fields missing";
+			if($_POST['comment']=='' || $_POST['ask_amount'] ==  '' || $_POST['ask_amount'] < 1 || $_POST['port'] ==  '' ){		
+				if($_POST['ask_amount'] < 1){
+					$errors[] = "Minumum Ask Amount is 1";
+				}else{
+					$errors[] = "Required fields missing";
+				}
 			}			
 			$ia = '';
 			$same_ia = $this->editProductModel->sameIntegratedAddress();//no changes to comment, amount or port and is same product id (no need to generate a new one...)
