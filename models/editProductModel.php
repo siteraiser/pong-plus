@@ -123,30 +123,23 @@ class editProductModel extends App {
 	function updateProduct(){
 
 		$query='UPDATE products SET 
-			comment=:comment,
+			label=:label,
 			out_message=:out_message,
 			out_message_uuid=:out_message_uuid,
-			ask_amount=:ask_amount,
-			respond_amount=:respond_amount,
-			port=:port,
-			status=:status
+			respond_amount=:respond_amount
+
 			WHERE id=:id';
 		
 		
 		$stmt=$this->pdo->prepare($query);
 		$stmt->execute(array(
-			':comment'=>$_POST['comment'],	
+			':label'=>$_POST['label'],	
 			':out_message'=>$_POST['out_message'],
-			':out_message_uuid'=>isset($_POST['out_message_uuid']) ? 1 : 0,
-			':ask_amount'=>$_POST['ask_amount'],
+			':out_message_uuid'=>isset($_POST['out_message_uuid']) ? 1 : 0,			
 			':respond_amount'=>($_POST['respond_amount']=='' || $_POST['respond_amount'] < 1 ? 1 :$_POST['respond_amount']),
-			':port'=>$_POST['port'],
-			':status'=>isset($_POST['status']) ? 1 : 0,
 			':id'=>$_POST['pid']));				
 					
-		if($stmt->rowCount()==0){
-			return false;
-		}
+		
 		return $_POST['pid'];
 	}
 }
