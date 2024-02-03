@@ -4,13 +4,13 @@ class processModel extends App {
 
 	function setInstalledTime(){
 
-		$stmt=$this->pdo->prepare("SELECT install_time_utc FROM settings");
+		$stmt=$this->pdo->prepare("SELECT value FROM settings WHERE name = 'install_time_utc'");
 		$stmt->execute([]);		
 		if($stmt->rowCount()==0){
 			return false;
 		}
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);		
-		$this->installed_time_utc = $row['install_time_utc'];
+		$this->installed_time_utc = $row['value'];
 	}
 
 
@@ -37,12 +37,14 @@ class processModel extends App {
 			buyer_address,
 			amount,
 			port,
+			for_product_id,
+			product_label,
 			processed,
 			block_height,
 			time_utc
 			)
 			VALUES
-			(?,?,?,?,?,?,?)
+			(?,?,?,?,?,?,?,?,?)
 			';	
 		
 		$array=array(
@@ -50,6 +52,8 @@ class processModel extends App {
 			$tx->buyer_address,
 			$tx->amount,
 			$tx->port,
+			$tx->for_product_id,
+			$tx->product_label,
 			0,
 			$tx->height,
 			$tx->time_utc,
@@ -81,6 +85,13 @@ class processModel extends App {
 			}else if($payload->name == "D" && $payload->datatype == "U"){
 				$tx['port'] = $payload->value;					
 			}					
+		}
+		
+		//Determine product id and current label
+		$ia_settings = $this->getIAsettings($tx);
+		if($ia_settings!==false){
+			$tx['for_product_id'] = $ia_settings['product_id'];
+			$tx['product_label'] = $ia_settings['label'];
 		}
 		
 		return (object)$tx;
