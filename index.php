@@ -129,6 +129,9 @@ table.txns,table.txns th, table.txns td {
 	<div class="close">X</div>
 	<h2>Add New Product / Service</h2>
 	<form>
+		<label>Product Label
+			<input id="label" name="label" type="text" >
+		</label>
 		<label>Comment
 			<input id="comment" name="comment" type="text" >
 		</label>
@@ -155,6 +158,9 @@ table.txns,table.txns th, table.txns td {
 	<h2>Edit Product / Service</h2>
 	<form>
 		<input id="pid" name="pid" type="hidden">
+		<label>Product Label
+			<input id="label" name="label" type="text" >
+		</label>		
 		<label>Comment
 			<input id="comment" name="comment" type="text" >
 		</label>
@@ -241,9 +247,10 @@ function loadout() {
 
 
 function createTable(table_data) {
-  	var table = '<thead><th>Comment</th><th>Amount</th><th>Out Message</th><th>Response Amt.</th><th>Buyer Address</th><th>TXID</th><th>Time UTC</th></thead><tbody>';
+  	var table = '<thead><th>Product Label</th><th>Comment</th><th>Amount</th><th>Out Message</th><th>Response Amt.</th><th>Buyer Address</th><th>TXID</th><th>Time UTC</th></thead><tbody>';
 	table_data.transactions.forEach(function (val, index, array) {
 		let td='';
+		td +='<td>'+ val.label + '</td>';
 		td +='<td>'+ val.comment + '</td>';
 		td +='<td>'+ val.amount + '</td>';
 		td +='<td>'+ val.out_message + '</td>';
@@ -378,7 +385,6 @@ function generateProduct(product) {
 	
 	button.addEventListener("click", (event) => {
 		//let form = event.target.parentElement;
-	
 		editProducts(product.id);
 	
 		
@@ -387,12 +393,10 @@ function generateProduct(product) {
 	button.appendChild(edit);
 	main.appendChild(button);
 	
-	div.appendChild(createSection("Comment: " +product.comment));	
-	div.appendChild(createSection("Ask Amount: " + product.ask_amount + " - (" + niceRound( product.ask_amount * .00001) + " Dero)" ));
+	div.appendChild(createSection("Label: " +product.label));	
 	div.appendChild(createSection("Respond Amount: " + product.respond_amount + " - (" + niceRound( product.respond_amount * .00001) + " Dero) - Applies to all I. Addrs. for this product"));	
 	div.appendChild(createSection("Out Message: " + (product.out_message_uuid ==1 ? "UUID - "+ product.out_message:product.out_message) + " - Applies to all I. Addrs. for this product"));
 
-	div.appendChild(createSection("Port: " + product.port));
 
 	var iaddresses = document.createElement('div');
 	iaddresses.appendChild(createSection("Integrated Addresses"));
@@ -521,7 +525,7 @@ add_product_button.addEventListener("click", (event) => {
 
 function editProduct(form) {
 	async function submitProduct(form) {
-
+		
 	  try {
 		const response = await fetch("/editproduct.php", {
 		  method: "POST", // or 'PUT'
@@ -562,6 +566,7 @@ function editProduct(form) {
 	}
 
 	submitProduct(form);
+	
 }
 
 edit_product_button.addEventListener("click", (event) => {
@@ -577,22 +582,33 @@ edit_product_button.addEventListener("click", (event) => {
 function editProducts(pid) {
 
 	
-	var editing = products_array.find(x => x.id === pid);
-	
+	var editing = products_array.find(x => x.id == pid);
+
 	edit_product_modal.querySelector("#pid").value = editing.id;
-	edit_product_modal.querySelector("#comment").value = editing.comment;
+	edit_product_modal.querySelector("#label").value = editing.label;
+
 	edit_product_modal.querySelector("#edit_out_message").classList.remove("warning");
 	edit_product_modal.querySelector("#edit_out_message").value = editing.out_message;	
 	edit_product_modal.querySelector("#out_message_uuid").checked = (editing.out_message_uuid == 1? true:false);	
-	edit_product_modal.querySelector("#ask_amount").value = editing.ask_amount;
-	convert(edit_product_modal.querySelector("#ask_amount"));
+
 	edit_product_modal.querySelector("#respond_amount").value = editing.respond_amount;
 	convert(edit_product_modal.querySelector("#respond_amount"));
-	edit_product_modal.querySelector("#port").value = editing.port;	
+	
 	
 	edit_product_modal.querySelector("#integrated_addresses").innerHTML ='';
+	let last_ia = editing.iaddress.length -1;
 	editing.iaddress.forEach(function (iadd, index, array) {
+		//Auto fill using last ia
+		if(index == last_ia){
+			edit_product_modal.querySelector("#comment").value = iadd.comment;
+			edit_product_modal.querySelector("#ask_amount").value = iadd.ask_amount;
+			convert(edit_product_modal.querySelector("#ask_amount"));
+			edit_product_modal.querySelector("#port").value = iadd.port;	
+		}
+		
+		
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Integrated Address: "+iadd.iaddr+"<br>";
+		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Comment: "+iadd.comment+"<br>";
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Ask Amount: "+iadd.ask_amount+ " - (" + niceRound( iadd.ask_amount * .00001) + " Dero)"+"<br>";
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Port: "+iadd.port+"<br>";
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += "Status Active?: ";
