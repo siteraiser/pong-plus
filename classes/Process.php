@@ -129,6 +129,7 @@ class Process extends App {
 				$tx['out_message'] = $transfer['out_message'];
 				$tx['type'] = "sale";
 				$tx['out_message_uuid'] = $settings['out_message_uuid'];
+
 			}else{
 				//No mathcing products / I. Addresses found
 				//Send Refund to buyer
