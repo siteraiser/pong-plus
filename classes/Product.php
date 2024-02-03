@@ -143,9 +143,7 @@ class Product extends App {
 					}
 				}	
 				$product_id = $this->editProductModel->updateProduct();
-				if($product_id === false && !$changes){
-					$errors[] = "Failed to update product in db";
-				}	
+				
 			}
 
 			//Save integrated address with product id
