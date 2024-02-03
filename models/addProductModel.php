@@ -80,25 +80,19 @@ class addProductModel extends App {
 	function insertProduct(){
 
 		$query='INSERT INTO products (
-			comment,
+			label,
 			out_message,
 			out_message_uuid,
-			ask_amount,
-			respond_amount,
-			port,
-			status
+			respond_amount
 			)
 			VALUES
-			(?,?,?,?,?,?,?)';	
+			(?,?,?,?)';	
 		
 		$array=array(
-			$_POST['comment'],
+			$_POST['label'],
 			$_POST['out_message'],
 			isset($_POST['out_message_uuid']) ? 1 : 0,
-			$_POST['ask_amount'],
-			($_POST['respond_amount']=='' || $_POST['respond_amount'] < 1 ? 1 :$_POST['respond_amount']),
-			$_POST['port'],
-			1
+			($_POST['respond_amount']=='' || $_POST['respond_amount'] < 1 ? 1 :$_POST['respond_amount'])
 			);				
 				
 		$stmt=$this->pdo->prepare($query);
