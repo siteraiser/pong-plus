@@ -2,24 +2,24 @@
 <html>
 <head>
 <style>
-.header > div{display:inline-block;vertical-align:middle;}
+
 .timer{float:right;}
 
-#products div{
+#main div{
 	border:1px solid grey;
 	padding:10px;
 	
 }
-#products > div{
+#main > div{
 	border:2px solid green;
 	padding:10px;
 	border-radius:3px;
 }
-#products > div > div > div > div{
+#main > div > div > div > div{
 	border:none;
 	padding:10px;
 }
-#products > button{
+#main > button{
 	position:relative;
 	top:10px;
 }
@@ -60,7 +60,7 @@
 .hidden{display:none;}
 
 
-.modal, #products > div, #messages,#products > div, #transactions{
+.modal, #main > div, #messages,#main > div, #transactions{
 	 overflow-wrap: break-word;
 }
 #messages,#transactions{
@@ -71,27 +71,59 @@
 
 .warning{color:red;}
 
+
+#products_header > div, #menu > div{display:inline-block;vertical-align:middle;}
+#products_header,#menu{margin:10px;}
+#menu button.selected{color:green;}
+
+
+
+table.txns {
+	word-break: break-word;
+	width: 100%;
+}
+table.txns,table.txns th, table.txns td {
+	border: 1px solid;
+}
+
+
+
 </style>
 </head>
 <body>
+<div class="timer">
+	<button id="pause">Pause</button> - 
+	<div id="timer">0</div>
+</div>
+
+<div id="menu">
+	<div>
+		<button id="show_products" class="selected">Products</button>
+	</div>
+	<div>
+		<button id="show_records">Records</button>
+	</div>
+</div>
+
+<hr>
+
 <div id="messages" class="modal hidden"><div class="close">X</div><div id="message_list"></div></div>
 <div id="transactions" class="modal hidden"><div class="clear">clear</div><div class="close">X</div><div id="transactions_list"></div></div>
-<div class="header">
+<div id="products_header">
 	<div>
 		<button id="show_add_modal">Add Product</button>
 	</div>
 	<div>
 		<button id="show_transactions">Show Transactions</button>
 	</div>
-	<div class="timer">
-		<button id="pause">Pause</button> - 
-		<div id="timer">0</div>
-	</div>
+	
 </div>
 <div class= "darken hidden"></div>
 
-<div id="products"></div>
 
+<div id="main">
+	
+</div>
 
 <div id="add_product_modal" class="modal hidden">
 	<div class="close">X</div>
@@ -147,9 +179,96 @@
 	</form>
 </div>
 <script>
+
+//manage the views
+var show_records_button = document.getElementById("show_records");
+var show_products_button = document.getElementById("show_products");
+var products_header = document.getElementById("products_header");
+
+show_products_button.addEventListener("click", (event) => {
+	show_products_button.classList.add("selected");	
+	show_records_button.classList.remove("selected");
+	main.innerHTML = '';	
+	products_header.classList.remove("hidden");
+	displayProducts(products_array);
+})
+
+show_records_button.addEventListener("click", (event) => {
+	show_records_button.classList.add("selected");
+	show_products_button.classList.remove("selected");
+	main.innerHTML = '';
+	products_header.classList.add("hidden");
+	loadout();
+})
+
+
+
+/*************************/
+/* Show All Transactions */
+/*************************/
+
+function loadout() {
+	async function getTransactions(data) {
+	  try {
+		const response = await fetch("/loadout.php", {
+		  method: "POST", // or 'PUT'
+		  headers: {
+        'credentials': 'same-origin',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json;charset=utf-8'
+        },
+		  body: JSON.stringify(data),
+		});
+
+		var result = await response.json();			
+
+		main.innerHTML = createTable(result);
+		
+		
+		
+		//products_array=result.transactions;
+		//displayTransactions(transactions_array);
+		
+	  } catch (error) {
+		console.error("Error:", error);
+	  }
+	}
+
+	const data = { mode: "year" };
+	getTransactions(data);
+}
+
+
+
+function createTable(table_data) {
+  	var table = '<thead><th>Comment</th><th>Amount</th><th>Out Message</th><th>Response Amt.</th><th>Buyer Address</th><th>TXID</th><th>Time UTC</th></thead><tbody>';
+	table_data.transactions.forEach(function (val, index, array) {
+		let td='';
+		td +='<td>'+ val.comment + '</td>';
+		td +='<td>'+ val.amount + '</td>';
+		td +='<td>'+ val.out_message + '</td>';
+		td +='<td>'+ val.out_amount + '</td>';		
+		td +='<td>'+ val.buyer_address + '</td>';
+		td +='<td>'+ val.txid + '</td>';
+		td +='<td>'+ val.time_utc + '</td>';
+		
+		
+		table += '<tr>'+ td + '</tr>';
+	});
+	
+	return '<table class="txns">'+table+'</tbody></table>';
+}
+
+
+
+
+/*****************************/
+/* Products and I. Addresses */
+/*****************************/
+
 var products_array=[];
 
-var products = document.getElementById("products");
+var main = document.getElementById("main");
 var messages = document.getElementById("messages");
 var transactions = document.getElementById("transactions");
 var show_transactions_button = document.getElementById("show_transactions");
@@ -266,7 +385,7 @@ function generateProduct(product) {
 	});	
 	
 	button.appendChild(edit);
-	products.appendChild(button);
+	main.appendChild(button);
 	
 	div.appendChild(createSection("Comment: " +product.comment));	
 	div.appendChild(createSection("Ask Amount: " + product.ask_amount + " - (" + niceRound( product.ask_amount * .00001) + " Dero)" ));
@@ -295,7 +414,7 @@ function generateProduct(product) {
 	});
 	
 	div.appendChild(iaddresses);
-	products.appendChild(div);
+	main.appendChild(div);
 	
 }
 
@@ -313,7 +432,7 @@ function displayProducts(products){
 function initialize(runit) {
 	async function getProducts(data) {
 	  try {
-		const response = await fetch("//localhost/initialize.php", {
+		const response = await fetch("/initialize.php", {
 		  method: "POST", // or 'PUT'
 		  headers: {
         'credentials': 'same-origin',
@@ -345,7 +464,7 @@ function initialize(runit) {
 function addProduct(form) {
 	async function submitProduct(form) {
 	  try {
-		const response = await fetch("//localhost/addproduct.php", {
+		const response = await fetch("/addproduct.php", {
 		  method: "POST", // or 'PUT'
 		  headers: {
         'credentials': 'same-origin' 
@@ -368,7 +487,7 @@ function addProduct(form) {
 		}else{
 			
 			products_array.push(result.products[0]);
-			products.innerHTML = '';			
+			main.innerHTML = '';			
 			displayProducts(products_array);
 			add_product_modal.classList.add("hidden");
 			darken_layer.classList.add("hidden");
@@ -404,7 +523,7 @@ function editProduct(form) {
 	async function submitProduct(form) {
 
 	  try {
-		const response = await fetch("//localhost/editproduct.php", {
+		const response = await fetch("/editproduct.php", {
 		  method: "POST", // or 'PUT'
 		  headers: {
         'credentials': 'same-origin' 
@@ -430,7 +549,7 @@ function editProduct(form) {
 			}
 		
 		}else{
-			products.innerHTML = '';
+			main.innerHTML = '';
 			products_array = result.products;
 			displayProducts(products_array);
 			editProducts(form.querySelector("#pid").value);
@@ -509,7 +628,7 @@ window.addEventListener('load', function() {
 function checkWallet() {
 	async function process() {
 	  try {
-		const response = await fetch("//localhost/process.php", {
+		const response = await fetch("/process.php", {
 		  method: "POST", // or 'PUT'
 		  headers: {
         'credentials': 'same-origin',
