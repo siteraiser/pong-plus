@@ -169,9 +169,9 @@ class processModel extends App {
 		$stmt=$this->pdo->prepare("
 		SELECT *, responses.out_message AS response_out_message FROM responses 
 		INNER JOIN incoming ON responses.incoming_id = incoming.id 
-		RIGHT JOIN products ON incoming.for_product_id = products.id 
-		RIGHT JOIN i_addresses ON incoming.id = i_addresses.product_id
-		WHERE incoming.amount = i_addresses.ask_amount AND incoming.port = i_addresses.port AND responses.txid = ?
+		RIGHT JOIN i_addresses ON incoming.amount = i_addresses.ask_amount 
+		RIGHT JOIN products ON i_addresses.product_id = products.id 
+		WHERE incoming.for_product_id = i_addresses.product_id AND incoming.amount = i_addresses.ask_amount AND incoming.port = i_addresses.port AND responses.txid = ?
 		");
 		$stmt->execute([$txid]);		
 		if($stmt->rowCount()==0){
