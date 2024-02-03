@@ -230,11 +230,6 @@ function loadout() {
 
 		main.innerHTML = createTable(result);
 		
-		
-		
-		//products_array=result.transactions;
-		//displayTransactions(transactions_array);
-		
 	  } catch (error) {
 		console.error("Error:", error);
 	  }
@@ -247,14 +242,14 @@ function loadout() {
 
 
 function createTable(table_data) {
-  	var table = '<thead><th>Product Label</th><th>Comment</th><th>Amount</th><th>Out Message</th><th>Response Amt.</th><th>Buyer Address</th><th>TXID</th><th>Time UTC</th></thead><tbody>';
+  	var table = '<thead><th>Product Label</th><th>Comment</th><th>Amount</th><th>Out Message</th><th>Response Amt.</th><th>Buyer Address</th><th>Out TXID</th><th>Time UTC</th></thead><tbody>';
 	table_data.transactions.forEach(function (val, index, array) {
 		let td='';
 		td +='<td>'+ val.label + '</td>';
 		td +='<td>'+ val.comment + '</td>';
-		td +='<td>'+ val.amount + '</td>';
+		td +='<td>'+ val.amount + ' (' + niceRound( val.amount * .00001) + ' Dero)' + '</td>';
 		td +='<td>'+ val.out_message + '</td>';
-		td +='<td>'+ val.out_amount + '</td>';		
+		td +='<td>'+ val.out_amount + ' (' + niceRound( val.out_amount * .00001) + ' Dero)' + '</td>';		
 		td +='<td>'+ val.buyer_address + '</td>';
 		td +='<td>'+ val.txid + '</td>';
 		td +='<td>'+ val.time_utc + '</td>';
@@ -372,10 +367,9 @@ function createSection(section){
 /* load out the products */
 function generateProduct(product) {
 	
-	//console.log(product);
 	
 	let div = document.createElement('div');
-	//let br = document.createElement('br');
+
 	div.classList.add('product');
 	div.setAttribute("data-productid",product.id);
 	div.classList.add('product');
@@ -384,7 +378,7 @@ function generateProduct(product) {
 	let button = document.createElement('button'); 
 	
 	button.addEventListener("click", (event) => {
-		//let form = event.target.parentElement;
+
 		editProducts(product.id);
 	
 		
@@ -617,19 +611,10 @@ function editProducts(pid) {
 		edit_product_modal.querySelector("#integrated_addresses").innerHTML += checkbox+"<hr>";;
 		
 	});
-	//edit_product_modal.querySelector("#integrated_addresses") = editing.port;	
-	
-	//'<input id="out_message_uuid" name="out_message_uuid" type="checkbox" >'
-	
-	
 	
 	edit_product_modal.classList.remove("hidden");
 	darken_layer.classList.remove("hidden");
 }
-
-
-
-
 
 
 
