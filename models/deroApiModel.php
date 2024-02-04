@@ -171,7 +171,7 @@ class deroApiModel{
 	//Creates a transfer to respond to new sales (destination address). 
 	//If a smart contract is specified it can transfer that. 
 	//If a respond amount is specified it will send that.
-	//You have 144 by for an out message (link or uuid etc).
+	//You have ~128 bytes by for an out message (link or uuid etc).
 	function transfer($transfers=[]){	
 		$transfer_string='';
 		foreach($transfers as $transfer){
