@@ -27,7 +27,7 @@ class processModel extends App {
 
 	function insertNewTransaction($tx){
 		
-		if($this->txExists($tx) || $tx->time_utc < $this->installed_time_utc){// INSTALL_TIME_UTC|| $this->installed_time_utc ==''
+		if($tx === false || $this->txExists($tx) || $tx->time_utc < $this->installed_time_utc){// INSTALL_TIME_UTC|| $this->installed_time_utc ==''
 			return false;
 		}
 		
@@ -77,16 +77,21 @@ class processModel extends App {
 		$given = new DateTime($entry->time);
 		$given->setTimezone(new DateTimeZone("UTC"));	
 		$tx['time_utc'] = $given->format("Y-m-d H:i:s");
-						
+		
+		$has_r = false;				
 		//Find buyer address in payload
 		foreach($entry->payload_rpc as $payload){
 			if($payload->name == "R" && $payload->datatype == "A"){
+				$has_r = true;
 				$tx['buyer_address'] = $payload->value;
 			}else if($payload->name == "D" && $payload->datatype == "U"){
 				$tx['port'] = $payload->value;					
 			}					
 		}
-		
+		//Not an integrated address
+		if($has_r === false){
+			return false;
+		}
 		//Determine product id and current label
 		$ia_settings = $this->getIAsettings($tx);
 		if($ia_settings!==false){
